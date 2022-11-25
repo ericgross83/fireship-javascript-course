@@ -6,28 +6,32 @@ form.addEventListener('submit', async (e) => {
   showSpinner()
   e.preventDefault()
 
-  try {
-    const data = new FormData(form)
 
-    const response = await fetch('http://localhost:1234/dream', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        prompt: data.get('prompt')
-      })
-    });
-  
+  const data = new FormData(form)
+
+  const response = await fetch('http://localhost:1234/dream', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      prompt: data.get('prompt')
+    })
+  });
+
+  if (response.ok) {
     const { image } = await response.json()
-  
+
     const result = document.querySelector('#result')
     result.innerHTML = `<img src="${image}" width="512"/>`
-  } catch (error) {
-    console.log(error);
-  } finally {
-    hideSpinner()
+  } else {
+    const err = await response.text();
+    alert(err);
+    console.error(err);
   }
+
+  hideSpinner()
+
 
 })
 
